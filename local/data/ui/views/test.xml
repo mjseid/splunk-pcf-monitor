@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<dashboard>
+  <label>test</label>
+  <row>
+    <chart>
+      <searchName>MJSTEST</searchName>
+      <title>MJSTEST</title>
+      <option name="charting.chart">line</option>
+    </chart>
+  </row>
+</dashboard>
