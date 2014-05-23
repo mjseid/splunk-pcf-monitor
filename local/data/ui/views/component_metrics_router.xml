@@ -19,7 +19,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="Router" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index router_total_requests router_total_routes router_bad_gateways router_bad_requests</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="Router" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index router_total_requests router_total_routes router_bad_gateways router_bad_requests log_count_level_error log_count_level_warn log_count_level_fatal router_rejected_requests router_ms_since_last_registry_update router_routed_app_requests</searchTemplate>
   <row>
     <chart>
       <title>Total Requests</title>
@@ -74,7 +74,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Bad Gateways and Requests</title>
-      <searchPostProcess>timechart avg(router_bad_gateways) as "Bad Gateways" avg(router_bad_requests) as "Bad Requests" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(router_bad_gateways) as "Bad Gateways" avg(router_rejected_requests) as "Rejected Requests" by job_and_index useother=f limit=50</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -103,4 +103,104 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>
+  <row>
+    <chart>
+      <title>Logs</title>
+      <searchPostProcess>timechart avg(log_count_level_error) as "Error Log" avg(log_count_level_warn) as "Warn Log" avg(log_count_level_fatal) as "Fatal Log" by job_and_index useother=f
+ limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Count</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+  <row>
+    <chart>
+      <title>Ms Since Last Registry Update</title>
+      <searchPostProcess>timechart avg(router_ms_since_last_registry_update) as "MS Since Update" by job_and_index useother=f
+ limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Ms</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+  <row>
+    <chart>
+      <title>Routed App Requests</title>
+      <searchPostProcess>timechart avg(router_routed_app_requests) as "App Requests" by job_and_index useother=f
+ limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Requests</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+
 </form>

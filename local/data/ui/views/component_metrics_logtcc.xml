@@ -1,5 +1,5 @@
 <?xml version="1.0"?><form>
-  <label>LoggregatorTrafficController</label>
+  <label>Loggreagator TrafficController</label>
   <fieldset autoRun="true">
     <input type="dropdown" token="jvmDescription">
       <label>Choose JVM Description</label>
@@ -19,11 +19,32 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="CloudController" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index *</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="LoggregatorTrafficcontroller" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index LoggregatorTrafficcontroller_agentListener_currentBufferCount  LoggregatorTrafficcontroller_agentListener_receivedByteCount  LoggregatorTrafficcontroller_agentListener_receivedMessageCount LoggregatorTrafficcontroller_loggregatorClient_currentBufferCount LoggregatorTrafficcontroller_loggregatorClient_receivedByteCount LoggregatorTrafficcontroller_loggregatorClient_receivedMessageCount LoggregatorTrafficcontroller_loggregatorClient_sentByteCount LoggregatorTrafficcontroller_loggregatorClient_sentMessageCount LoggregatorTrafficcontroller_memoryStats_lastGCPauseTimeNS LoggregatorTrafficcontroller_numGoRoutines</searchTemplate>
   <row>
     <chart>
-      <title>HTTP Status Count</title>
-      <searchPostProcess>timechart avg(cc_http_status_1XX) as "HTTP 1XX  Count" avg(cc_http_status_2XX) as "HTTP 2XX Count" avg(cc_http_status_3XX) as "HTTP 3XX Count" avg(cc_http_status_4XX) as "HTTP 4XX Count" avg(cc_http_status_5XX) as "HTTP 5XX Count" by job_and_index useother=f limit=50</searchPostProcess>
+      <title>Listener Stats</title>
+      <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_agentListener_currentBufferCount) as "Buffer Count" avg(LoggregatorTrafficcontroller_agentListener_receivedByteCount) as "Rx Bytes" avg(LoggregatorTrafficcontroller_agentListener_receivedMessageCount) as "Rx Messages" by job_and_index useother=f limit=50</searchPostProcess>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.axisTitleX.text">Time</option>
+      <option name="charting.axisTitleY.text">Count</option>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+    </chart>
+  </row>
+ <row>
+    <chart>
+      <title>Client Stats</title>
+      <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_loggregatorClient_currentBufferCount) as "Buffer Count" avg(LoggregatorTrafficcontroller_loggregatorClient_receivedByteCount) as "Rx Bytes" avg(LoggregatorTrafficcontroller_loggregatorClient_receivedMessageCount) as "Rx Messages" avg(LoggregatorTrafficcontroller_loggregatorClient_sentByteCount) as "Tx Bytes" avg(LoggregatorTrafficcontroller_loggregatorClient_sentMessageCount) as "Tx Messages" by job_and_index useother=f limit=50</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>
@@ -43,8 +64,8 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   </row>
   <row>
     <chart>
-      <title>Requests</title>
-     <searchPostProcess>timechart avg(cc_requests_outstanding) as "Outstanding Requests" avg(cc_requests_completed) as "Completed Requests" by job_and_index useother=f limit=50</searchPostProcess>
+      <title>GC Pause</title>
+     <searchPostProcess>eval GCPause=LoggregatorTrafficcontroller_memoryStats_lastGCPauseTimeNS/100000 | timechart avg(GCPause) as "GC Pause" by job_and_index useother=f limit=50</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -69,14 +90,14 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="table.drilldown">1</option>
       <option name="table.wrap">1</option>
       <option name="type">list</option>
-      <option name="charting.axisTitleY.text">Requests</option>
+      <option name="charting.axisTitleY.text">Ms</option>
       <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>
   <row>
     <chart>
-      <title>Job Queue Length</title>
-     <searchPostProcess>timechart avg(cc_job_queue_length_cc_generic) as "Job Queue Length" by job_and_index useother=f limit=50</searchPostProcess>
+      <title>Go Routines</title>
+     <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_numGoRoutines) as "Go Routines" by job_and_index useother=f limit=50</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -102,38 +123,6 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="table.wrap">1</option>
       <option name="type">list</option>
       <option name="charting.axisTitleY.text">Count</option>
-      <option name="charting.axisTitleX.text">Time</option>
-    </chart>
-  </row>
-  <row>
-    <chart>
-      <title>Total Users</title>
-     <searchPostProcess>timechart avg(total_users) as "Users" by job_and_index useother=f limit=50</searchPostProcess>
-      <earliestTime>$earliest$</earliestTime>
-      <latestTime>$latest$</latestTime>
-      <option name="charting.axisTitleX.visibility">visible</option>
-      <option name="charting.axisTitleY.visibility">visible</option>
-      <option name="charting.axisX.scale">linear</option>
-      <option name="charting.axisY.scale">linear</option>
-      <option name="charting.chart">line</option>
-      <option name="charting.chart.nullValueMode">connect</option>
-      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
-      <option name="charting.chart.stackMode">default</option>
-      <option name="charting.chart.style">shiny</option>
-      <option name="charting.drilldown">all</option>
-      <option name="charting.layout.splitSeries">0</option>
-      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
-      <option name="charting.legend.placement">right</option>
-      <option name="count">10</option>
-      <option name="list.drilldown">full</option>
-      <option name="list.wrap">1</option>
-      <option name="maxLines">5</option>
-      <option name="raw.drilldown">full</option>
-      <option name="rowNumbers">0</option>
-      <option name="table.drilldown">1</option>
-      <option name="table.wrap">1</option>
-      <option name="type">list</option>
-      <option name="charting.axisTitleY.text">Users</option>
       <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>

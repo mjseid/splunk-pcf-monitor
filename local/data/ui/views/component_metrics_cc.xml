@@ -19,7 +19,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="CloudController" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index cc_http_status_1XX cc_http_status_2XX cc_http_status_3XX cc_http_status_4XX cc_http_status_5XX cc_requests_outstanding cc_requests_completed cc_job_queue_length_cc_generic total_users</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="CloudController" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index cc_http_status_1XX cc_http_status_2XX cc_http_status_3XX cc_http_status_4XX cc_http_status_5XX cc_requests_outstanding cc_requests_completed cc_job_queue_length_cc_generic total_users cpu_load_avg  log_count_level_warn log_count_level_error log_count_level_fatal cc_thread_info_thread_count cc_thread_info_event_machine_connection_count cc_thread_info_event_machine_resultqueue_size cc_thread_info_event_machine_resultqueue_num_waiting cc_thread_info_event_machine_threadqueue_waiting g cc_thread_info_event_machine_threadqueue_size</searchTemplate>
   <row>
     <chart>
       <title>HTTP Status Count</title>
@@ -134,6 +134,166 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="table.wrap">1</option>
       <option name="type">list</option>
       <option name="charting.axisTitleY.text">Users</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+ <row>
+    <chart>
+      <title>Event Machine Thread Queue</title>
+     <searchPostProcess>timechart avg(cc_thread_info_event_machine_threadqueue_waiting) as "Threads waiting" avg(cc_thread_info_event_machine_threadqueue_size) as "Queue Size" by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Queue Size</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+ <row>
+    <chart>
+      <title>Event Machine Result Queue</title>
+     <searchPostProcess>timechart avg(cc_thread_info_event_machine_resultqueue_size) as "Queue Size" avg(cc_thread_info_event_machine_resultqueue_num_waiting) as "Results Waiting" by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Queue size</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+<row>
+    <chart>
+      <title>Thread Info</title>
+     <searchPostProcess>timechart avg(cc_thread_info_thread_count) as "Threads" avg(cc_thread_info_event_machine_connection_count) as "Connections" by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Count</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+ <row>
+    <chart>
+      <title>Logs</title>
+     <searchPostProcess>timechart avg(log_count_level_warn) as "Warning" avg(log_count_level_error) as "Error" avg(log_count_level_fatal) as "Fatal" by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Count</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+ <row>
+    <chart>
+      <title>CPU Load</title>
+     <searchPostProcess>timechart avg(cpu_load_avg) as "CPU Load " by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Load Avg</option>
       <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>

@@ -19,7 +19,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="HM9000" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index HM9000_HM9000_NumberOfRunningInstances HM9000_HM9000_NumberOfCrashedInstances HM9000_HM9000_NumberOfDesiredInstances HM9000_HM9000_NumberOfCrashedIndices HM9000_HM9000_NumberOfMissingIndices HM9000_HM9000_NumberOfAppsWithAllInstancesReporting HM9000_HM9000_NumberOfAppsWithMissingInstances HM9000_HM9000_NumberOfDesiredApps HM9000_HM9000_NumberOfDesiredAppsPendingStaging HM9000_HM9000_NumberOfUndesiredRunningApps HM9000_memoryStats_lastGCPauseTimeNS HM9000_numGoRoutines HM9000_HM9000_ReceivedHeartbeats HM9000_HM9000_SavedHeartbeats HM9000_HM9000_StartCrashed HM9000_HM9000_StartEvacuating HM9000_HM9000_StartMissing HM9000_HM9000_StopDuplicate HM9000_HM9000_StopEvacauationComplete HM9000_HM9000_StopExtra</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="HM9000" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index HM9000_HM9000_NumberOfRunningInstances HM9000_HM9000_NumberOfCrashedInstances HM9000_HM9000_NumberOfDesiredInstances HM9000_HM9000_NumberOfCrashedIndices HM9000_HM9000_NumberOfMissingIndices HM9000_HM9000_NumberOfAppsWithAllInstancesReporting HM9000_HM9000_NumberOfAppsWithMissingInstances HM9000_HM9000_NumberOfDesiredApps HM9000_HM9000_NumberOfDesiredAppsPendingStaging HM9000_HM9000_NumberOfUndesiredRunningApps HM9000_memoryStats_lastGCPauseTimeNS HM9000_numGoRoutines HM9000_HM9000_ReceivedHeartbeats HM9000_HM9000_SavedHeartbeats HM9000_HM9000_StartCrashed HM9000_HM9000_StartEvacuating HM9000_HM9000_StartMissing HM9000_HM9000_StopDuplicate HM9000_HM9000_StopEvacauationComplete HM9000_HM9000_StopExtra HM9000_HM9000_DesiredStateSyncTimeInMilliseconds HM9000_HM9000_ActualStateListenerStoreUsagePercentage</searchTemplate>
   <row>
     <chart>
       <title>Instance Metrics</title>
@@ -163,4 +163,65 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>
+  <row>
+    <chart>
+      <title>State Store Usage</title>
+      <searchPostProcess>timechart avg(HM9000_HM9000_ActualStateListenerStoreUsagePercentage) as "State Store Percent Used" by job_and_index useother=f limit=50</searchPostProcess>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Percent</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+  <row>
+    <chart>
+      <title>Desired State Sync Time</title>
+      <searchPostProcess>timechart avg(HM9000_HM9000_DesiredStateSyncTimeInMilliseconds) as "Sync Time" by job_and_index useother=f limit=50</searchPostProcess>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Ms</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+
 </form>

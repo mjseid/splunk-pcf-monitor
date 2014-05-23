@@ -6,16 +6,16 @@
 <view name="health" />
 </collection>
 
-<collection label="OS Related Metrics">
-<view name="os_metrics" />
-</collection>
-
 <collection label="Compenent Specific Metrics"> 
   <view name="component_metrics_cc" />
   <view name="component_metrics_dea" />
   <view name="component_metrics_hm9000" />
   <view name="component_metrics_router" />
   <view name="component_metrics_collector" />
+  <view name="component_metrics_etcd" />
+  <view name="component_metrics_logtcc" />
+  <view name="component_metrics_logsrv" />
+  <view name="component_metrics_logdea" />
 </collection>
 
 <collection label="Documentation"> 

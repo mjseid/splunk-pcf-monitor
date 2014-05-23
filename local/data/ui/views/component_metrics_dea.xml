@@ -19,19 +19,19 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-<searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="DEA" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index dea_registry_resuming dea_registry_crashed dea_registry_starting dea_registry_born dea_registry_deleted dea_registry_stopped dea_registry_stopping available_memory_ratio available_disk_ratio log_count_level_error log_count_level_warn log_count_level_fatal reservable_stagers can_stage</searchTemplate>
+<searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="DEA" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index dea_registry_resuming dea_registry_crashed dea_registry_starting dea_registry_born dea_registry_deleted dea_registry_stopped dea_registry_running dea_registry_stopping available_memory_ratio available_disk_ratio log_count_level_error log_count_level_warn log_count_level_fatal reservable_stagers can_stage cpu_load_avg warden_request_count total_warden_response_time_in_ms</searchTemplate>
   <row>
     <chart>
-      <title>Registry</title>
-      <searchPostProcess>timechart avg(dea_registry_resuming) as "Resuming" avg(dea_registry_crashed) as "Crashed" avg(dea_registry_starting) as "Starting" avg(dea_registry_born) as "Born" avg(dea_registry_deleted) as "Deleted" avg(dea_registry_stopped) as "Stopped" avg(dea_registry_stopping) as "Stopping" by job_and_index useother=f limit=50</searchPostProcess>
-      <option name="charting.chart">line</option>
-      <option name="charting.chart.nullValueMode">connect</option>
-      <option name="charting.axisTitleX.text">Time</option>
-      <option name="charting.axisTitleY.text">Count</option>
+      <title>CPU Load</title>
+      <searchPostProcess>timechart avg(cpu_load_avg) as "CPU Load" by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
       <option name="charting.axisTitleY.visibility">visible</option>
       <option name="charting.axisX.scale">linear</option>
       <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
       <option name="charting.chart.stackMode">default</option>
       <option name="charting.chart.style">shiny</option>
@@ -39,6 +39,17 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="charting.layout.splitSeries">0</option>
       <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
       <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Load</option>
+      <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>
   <row>
@@ -69,8 +80,29 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="table.drilldown">1</option>
       <option name="table.wrap">1</option>
       <option name="type">list</option>
-      <option name="charting.axisTitleY.text">Requests</option>
+      <option name="charting.axisTitleY.text">Ratio</option>
       <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+ <row>
+    <chart>
+      <title>Registry</title>
+      <searchPostProcess>timechart avg(dea_registry_resuming) as "Resuming" avg(dea_registry_crashed) as "Crashed" avg(dea_registry_starting) as "Starting" avg(dea_registry_born) as "Born" avg(dea_registry_deleted) as "Deleted" avg(dea_registry_stopped) as "Stopped" avg(dea_registry_stopping) as "Stopping" avg(dea_registry_running) as "Running" by job_and_index useother=f limit=50</searchPostProcess>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.axisTitleX.text">Time</option>
+      <option name="charting.axisTitleY.text">Count</option>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
     </chart>
   </row>
   <row>
@@ -166,6 +198,38 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       <option name="table.wrap">1</option>
       <option name="type">list</option>
       <option name="charting.axisTitleY.text">Staggers</option>
+      <option name="charting.axisTitleX.text">Time</option>
+    </chart>
+  </row>
+  <row>
+    <chart>
+      <title>Warden Request Count</title>
+      <searchPostProcess>timechart avg(warden_request_count) as "Requests" by job_and_index useother=f limit=50</searchPostProcess>
+      <earliestTime>$earliest$</earliestTime>
+      <latestTime>$latest$</latestTime>
+      <option name="charting.axisTitleX.visibility">visible</option>
+      <option name="charting.axisTitleY.visibility">visible</option>
+      <option name="charting.axisX.scale">linear</option>
+      <option name="charting.axisY.scale">linear</option>
+      <option name="charting.chart">line</option>
+      <option name="charting.chart.nullValueMode">connect</option>
+      <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+      <option name="charting.chart.stackMode">default</option>
+      <option name="charting.chart.style">shiny</option>
+      <option name="charting.drilldown">all</option>
+      <option name="charting.layout.splitSeries">0</option>
+      <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+      <option name="charting.legend.placement">right</option>
+      <option name="count">10</option>
+      <option name="list.drilldown">full</option>
+      <option name="list.wrap">1</option>
+      <option name="maxLines">5</option>
+      <option name="raw.drilldown">full</option>
+      <option name="rowNumbers">0</option>
+      <option name="table.drilldown">1</option>
+      <option name="table.wrap">1</option>
+      <option name="type">list</option>
+      <option name="charting.axisTitleY.text">Requests</option>
       <option name="charting.axisTitleX.text">Time</option>
     </chart>
   </row>
