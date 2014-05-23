@@ -1,4 +1,5 @@
 #splunk-pcf-monitor
+![Screenshot](README/dea_splunk.jpg)
 
 A splunk app for monitoring and alerting of Pivotal Cloud Foundry using Pivotal OpsMetrics.
 
@@ -59,7 +60,4 @@ sed -ie 's/userid@domain.com/myid@mydomain.com/g' /opt/splunk/etc/apps/jmx_cf/lo
 where myid@mydomain.com is the email (or comma seperated list of emails) you wish to send alerts to 
 
 
-Here is an illustration:
-
-![Raspberry Pi Wiring](doc/rpi-wiring.jpg)
 
