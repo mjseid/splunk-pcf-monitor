@@ -1,0 +1,23 @@
+<!--
+Example config file that sets up a notification listener on an MBean
+-->
+
+<jmxpoller>
+
+<formatter className="com.dtdsoftware.splunk.formatter.TokenizedMBeanNameQuotesStrippedFormatter" />
+
+<!-- Connect to a JVM via the remote JMX interface -->
+<jmxserver host="10.1.1.1" jvmDescription="tomcat" jmxport="1234" jmxuser="fred" jmxpass="secret">
+
+<mbean domain="myAppDomain" properties="type=foo">
+
+<!-- Add a notification listener to this MBean -->
+<notificationListener />
+  
+
+</mbean>
+
+</jmxserver>
+
+
+</jmxpoller>

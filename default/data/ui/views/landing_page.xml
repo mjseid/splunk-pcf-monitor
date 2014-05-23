@@ -1,0 +1,35 @@
+<dashboard>
+  <label>Monitoring of Pivotal CloudFoundry with JMX</label>
+  <description>Monitoring of Pivotal CloudFoundry with JMX</description>
+<row>
+<html>
+
+<h2>Setup Steps</h2>
+  <p>Out the box this app contains an <a href="../../manager/jmx_cf/data/inputs/jmx">example JMX modular input</a>. Before you enable this input , you should first edit the example 
+    configuration file at <b>SPLUNK_HOME/etc/apps/jmx_cf/bin/config/config.xml</b> to point to your target JVM. Also be sure that your target JVM is correctly setup to expose it's JMX Agent.</p> 
+
+<h2>Search the incoming data</h2>
+
+  <p> Once you have a basic setup configured and enabled, you can then <a href="../../app/search/search?q=search%20index%3Djmx%20sourcetype%3Djmx">search</a> your JMX data.With data now coming in , the example dashboards should start populating with data.Just browse to them via the Navigation bar above.</p> 
+
+<h2>Look for errors</h2>
+
+  <p>Any errors get written to Splunk's own internal logs which you can <a href="../../app/search/search?q=search%20index%3D_internal%20component%3DExecProcessor%20jmx.py">easily search over</a>.There is also <a href="../../app/jmx_cf/jmx_connectivity_errors">a dashboard</a> accesible via the above Navigation bar that reports on connectivity errors.</p> 
+
+<h2>Don't need the example dashboards ?</h2>
+
+<p>The Simple XML dashboards that are part of this app are purely examples of visualizing a subset of the available java.lang domain MBean attributes.
+    In all likelihood , you'll mostly be interested in just deploying the JMX Modular Input component of this app for collecting JMX data from your JVM landscape and then 
+    searching over and visualizing this data in a proprietary manner.
+  Simply just remove the <b>SPLUNK_HOME/etc/apps/jmx_cf/default/data/ui/nav</b> and  <b>SPLUNK_HOME/etc/apps/jmx_cf/default/data/ui/views</b> directorys if you don't require them.
+    
+    </p>
+
+<h2>Need more information ? </h2>
+
+<p>Browse the documentation via the above Navigation bar.</p>
+    
+</html>   
+</row>
+
+</dashboard>

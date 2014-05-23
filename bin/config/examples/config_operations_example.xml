@@ -1,0 +1,61 @@
+<!--
+Example config file that invokes operations on an MBean.
+
+Any operations that return a value should ensure that the return value can be parsed out as a String
+ie: a primitive type(boxed or unboxed), java.lang.String type 
+
+For setting parameters, the following "types" are supported :
+
+int
+float
+double
+long
+short
+byte
+boolean
+char
+string
+
+Internally these get autoboxed into their Object counterparts.
+
+Overloaded methods are supported.
+
+This file is strictly validated against the schema "config.xsd" (located in jmxpoller.jar)
+-->
+
+<jmxpoller>
+
+<formatter className="com.dtdsoftware.splunk.formatter.TokenizedMBeanNameQuotesStrippedFormatter" />
+
+<!-- Connect to a JVM via the remote JMX interface -->
+<jmxserver host="10.1.1.1" jvmDescription="tomcat" jmxport="1234" jmxuser="fred" jmxpass="secret">
+
+<mbean domain="myAppDomain" properties="type=foo">
+
+<!-- invoke operation with no arguments and write out result-->
+<operation name="getSystemTime" outputname="systime" />
+ 
+ <!-- invoke operation with int arguments and write out result-->
+<operation name="doMultiply" outputname="multiplied">
+  <parameter value="4" type="int" />
+  <parameter value="6" type="int" />
+</operation>
+
+ <!-- invoke operation with several argument types and write out result-->
+<operation name="concatentateArgs" outputname="concat">
+  <parameter value="Hello" type="string" />
+  <parameter value="World" type="string" />
+  <parameter value="1.2" type="double" />
+  <parameter value="true" type="boolean" />
+</operation>
+
+ <!-- invoke operation with no arguments and no result is returned-->
+<operation name="someMethod"/>
+  
+
+</mbean>
+
+</jmxserver>
+
+
+</jmxpoller>

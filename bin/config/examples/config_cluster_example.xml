@@ -1,0 +1,52 @@
+<!--
+Example config file that shows the usage of a cluster element
+
+Groups of jmxserver's that share that same mbeans can be grouped together in a cluster element,
+so that you only have to declare the MBeans/MBean attributes once ie: a cluster of JEE appservers, a cluster 
+of Hadoop or Cassandra nodes etc...
+
+This file is strictly validated against the schema "config.xsd" (located in jmxpoller.jar)
+-->
+
+<jmxpoller>
+
+<formatter className="com.dtdsoftware.splunk.formatter.TokenizedMBeanNameQuotesStrippedFormatter" />
+
+<!--  cluster example, many JVMs that have the same MBeans can be conveniently grouped together -->
+<cluster name="cluster1" description="A cluster of Cassandra Nodes">
+
+<!-- Mbeans common to all cluster members -->
+<mbean domain="java.lang" properties="type=Memory">
+
+<attribute name="HeapMemoryUsage:used" outputname="heapUsed"/>
+<attribute name="HeapMemoryUsage:max" outputname="heapMax"/>
+
+</mbean>
+
+<!-- cluster members with many examples of connecting to JMX Servers -->
+<jmxserver host="10.1.1.1" jvmDescription="node1" jmxport="1234" jmxuser="fred" jmxpass="secret"/>
+<jmxserver host="10.1.1.2" jvmDescription="node2" jmxport="1234" jmxuser="fred" jmxpass="secret"/>
+<jmxserver host="10.1.1.3" jvmDescription="node3" jmxport="4567" />
+<jmxserver pid="1234" jvmDescription="node4"/>
+<jmxserver pidFile="/home/myapp/bin/mypidfile.pid" jvmDescription="node5"/>
+<jmxserver pidCommand="/home/myapp/bin/obtain_JVM_pid.sh" jvmDescription="node6"/>
+<jmxserver host="localhost" jvmDescription="node7" jmxport="7654" />
+
+<!-- an example of inheritance.In addition to the common cluster mbeans, from this jmx server
+we also want a couple of other specific attributes -->
+<jmxserver host="10.1.1.4" jvmDescription="node8" jmxport="5678">
+
+<mbean domain="java.lang" properties="type=Memory">
+
+<!-- composite attributes -->
+<attribute name="NonHeapMemoryUsage:used" outputname="nonHeapUsed"/>
+<attribute name="NonHeapMemoryUsage:max" outputname="nonHeapMax"/>
+
+</mbean>
+
+</jmxserver>
+
+
+</cluster>
+
+</jmxpoller>

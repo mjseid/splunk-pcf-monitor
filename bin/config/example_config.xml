@@ -1,0 +1,262 @@
+<!--
+Example config file that obtains several attributes from the java.lang domain of a JMX Server.
+
+Shows many scenarios of simple attributes, array attributes, composite attributes, tabular attributes, 
+composite attributes nested within tabular attributes etc...
+
+Multiple jmxserver elements can be included and they will be executed in parallel
+
+A custom formatter can be specified.Only 1 may be specified for the entire configuration.
+This is a Java implementation of the "com.dtdsoftware.splunk.formatter.Formatter" interface.
+The formatter class must be placed on the java classpath.
+If the optional formatter declaration is omitted, then the default formatter will be used.
+
+
+Use this file as an example for polling any Mbean attributes you need to SPLUNK
+
+This file will work against Hotspot and JRockit JVMs.
+The IBM J9 JVM has slightly different attribute names for some beans in the java.lang domain
+
+This file is strictly validated against the schema "config.xsd" (located in jmxpoller.jar)
+-->
+
+<jmxpoller>
+
+<!-- 
+
+optional formatter declaration, will default to the DefaultFormatter class.
+Each of the 3 formatters below can take the optional 6 parameters as shown in the example.
+
+kvdelim : the key value pair delimeter.An equals is the default.
+pairdelim : the delimter to use between pairs.A comma is the default.
+prependDate : if true, then prepend an internal date to the event.false is the default.
+dateformat : specify a date format as per http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
+             yyyy-MM-dd HH:mm:ss:SSSZ is the default.
+quotevalues : if true the put quotes around values.true is the default.
+quotechar : the quote character to use. A doublequote is the default.
+stripPattern.n : a numbered list of regex patterns that can be declared to strip the matching pattern from MBean attribute and operation values.
+
+-->
+
+<!--
+<formatter className="com.dtdsoftware.splunk.formatter.DefaultFormatter" >
+  <param name="kvdelim" value="=" />
+  <param name="pairdelim" value="," />
+  <param name="prependDate" value="true" />
+  <param name="dateformat" value="yyyy-MM-dd HH:mm:ss:SSSZ" />
+  <param name="quotevalues" value="true"/>
+  <param name="quotechar" value='"'/>
+  <param name="stripPattern.0" value="^.+ = "/> 
+  <param name="stripPattern.1" value="a*b"/>
+</formatter>
+
+<formatter className="com.dtdsoftware.splunk.formatter.TokenizedMBeanNameFormatter" > 
+</formatter>
+-->
+<formatter className="com.dtdsoftware.splunk.formatter.TokenizedMBeanNameQuotesStrippedFormatter" />
+
+
+
+
+<!-- Connect to a JVM via the remote JMX interface -->
+<!-- Edit the following line with the connection information for OpsMetrics -->
+<jmxserver host="x.x.x.x" jvmDescription="xxxxx" jmxport="12345" jmxuser="xxxx" jmxpass="xxxxx">
+
+
+<!-- dump all the attributes of every mbean--> 
+<!-- <mbean domain="*" properties="*" dumpAllAttributes="true" />-->
+
+<!-- dump all the attributes of every mbean in the java.lang domain--> 
+<!-- <mbean domain="java.lang" properties="*" dumpAllAttributes="true"/>-->
+
+<mbean domain="org.cloudfoundry" properties="*" dumpAllAttributes="true">
+</mbean>
+
+
+
+<mbean domain="java.lang" properties="type=Threading">
+
+<!-- simple attributes -->
+<attribute name="TotalStartedThreadCount" outputname="started"/>
+<attribute name="ThreadCpuTimeSupported" outputname="cpuTimeSupported"/>
+<attribute name="ThreadCpuTimeEnabled" outputname="cpuTimeEnabled"/>
+<attribute name="ThreadCount" outputname="count"/>
+<attribute name="ThreadContentionMonitoringSupported" outputname="cmSupported"/>
+<attribute name="ThreadContentionMonitoringEnabled" outputname="cmEnabled"/>
+<attribute name="SynchronizerUsageSupported" outputname="synchSupported"/>
+<attribute name="PeakThreadCount" outputname="peak"/>
+<attribute name="ObjectMonitorUsageSupported" outputname="omuSupported"/>
+<attribute name="DaemonThreadCount" outputname="daemonCount"/>
+<attribute name="CurrentThreadUserTime" outputname="currentUserTime"/>
+<attribute name="CurrentThreadCpuTimeSupported" outputname="cpuTimeSupported"/>
+<attribute name="CurrentThreadCpuTime" outputname="currentCPUTime"/>
+
+</mbean>
+
+
+<mbean domain="java.lang" properties="type=Runtime">
+
+<!-- tabular attributes -->
+<attribute name="SystemProperties:user.timezone:value" outputname="timezone"/>
+<attribute name="SystemProperties:java.vm.vendor:value" outputname="jvmVendor"/>
+
+<!-- simple attributes -->
+<attribute name="VmVersion" outputname="jvmVersion"/>
+<attribute name="VmVendor" outputname="jvmVendor"/>
+<attribute name="VmName" outputname="jvmName"/>
+<attribute name="Uptime" outputname="jvmUptime"/>
+<attribute name="StartTime" outputname="startedAt"/>
+<attribute name="Name" outputname="jvmProcessName"/>
+
+<!-- simple array attribute -->
+<attribute name="InputArguments" outputname="inputArgs"/>
+
+</mbean>
+
+
+<mbean domain="java.lang" properties="type=OperatingSystem">
+
+<!-- simple attributes -->
+<attribute name="Version" outputname="version"/>
+<attribute name="TotalSwapSpaceSize" outputname="swapSpace"/>
+<attribute name="TotalPhysicalMemorySize" outputname="physMem"/>
+<attribute name="SystemLoadAverage" outputname="sysLoad"/>
+<attribute name="ProcessCpuTime" outputname="cpuTime"/>
+<attribute name="OpenFileDescriptorCount" outputname="openFD"/>
+<attribute name="Name" outputname="name"/>
+<attribute name="MaxFileDescriptorCount" outputname="maxFD"/>
+<attribute name="FreeSwapSpaceSize" outputname="freeSwap"/>
+<attribute name="FreePhysicalMemorySize" outputname="freePhysMem"/>
+<attribute name="CommittedVirtualMemorySize" outputname="committed"/>
+<attribute name="AvailableProcessors" outputname="processors"/>
+<attribute name="Arch" outputname="arch"/>
+
+
+</mbean>
+
+<mbean domain="java.lang" properties="type=Compilation">
+
+<!-- simple attributes -->
+<attribute name="TotalCompilationTime" outputname="time"/>
+
+</mbean>
+
+<mbean domain="java.lang" properties="type=ClassLoading">
+
+<!-- simple attributes -->
+<attribute name="TotalLoadedClassCount" outputname="total"/>
+<attribute name="LoadedClassCount" outputname="current"/>
+<attribute name="UnloadedClassCount" outputname="unloaded"/>
+
+</mbean>
+
+
+<mbean domain="java.lang" properties="type=Memory">
+
+<!-- composite attributes -->
+<attribute name="NonHeapMemoryUsage:used" outputname="nonHeapUsed"/>
+<attribute name="NonHeapMemoryUsage:max" outputname="nonHeapMax"/>
+<attribute name="NonHeapMemoryUsage:init" outputname="nonHeapInit"/>
+<attribute name="NonHeapMemoryUsage:committed" outputname="nonHeapCommitted"/>
+
+<attribute name="HeapMemoryUsage:used" outputname="heapUsed"/>
+<attribute name="HeapMemoryUsage:max" outputname="heapMax"/>
+<attribute name="HeapMemoryUsage:init" outputname="heapInit"/>
+<attribute name="HeapMemoryUsage:committed" outputname="heapCommitted"/>
+
+<attribute name="ObjectPendingFinalizationCount" outputname="objectsPending"/>
+
+</mbean>
+
+
+<mbean domain="java.lang" properties="type=MemoryPool,name=*">
+
+<attribute name="Name" outputname="name"/>
+<attribute name="Type" outputname="memoryType"/>
+<attribute name="MemoryManagerNames" outputname="memManagerNames"/>
+
+<attribute name="PeakUsage:used" outputname="peakUsageUsed"/>
+<attribute name="PeakUsage:max" outputname="peakUsageMax"/>
+<attribute name="PeakUsage:committed" outputname="peakUsageCommitted"/>
+<attribute name="PeakUsage:init" outputname="peakUsageInit"/>
+
+<!-- composite attributes -->
+<attribute name="CollectionUsage:used" outputname="colUsageUsed"/>
+<attribute name="CollectionUsage:max" outputname="colUsageMax"/>
+<attribute name="CollectionUsage:committed" outputname="colUsageCommitted"/>
+<attribute name="CollectionUsage:init" outputname="colUsageInit"/>
+
+<!-- composite attributes -->
+<attribute name="Usage:used" outputname="usageUsed"/>
+<attribute name="Usage:max" outputname="usageMax"/>
+<attribute name="Usage:committed" outputname="usageCommitted"/>
+<attribute name="Usage:init" outputname="usageInit"/>
+
+
+</mbean>
+
+
+<mbean domain="java.lang" properties="type=GarbageCollector,name=*">
+
+<!-- simple array attributes -->
+<attribute name="Name" outputname="gcName"/>
+<attribute name="MemoryPoolNames" outputname="memPools"/>
+
+<!-- simple attributes -->
+<attribute name="CollectionTime" outputname="colTime"/>
+<attribute name="CollectionCount" outputname="colCount"/>
+
+<!-- composite-simple attributes -->
+<attribute name="LastGcInfo:startTime" outputname="gCStart"/>
+<attribute name="LastGcInfo:endTime" outputname="gCEnd"/>
+<attribute name="LastGcInfo:id" outputname="gCID"/>
+<attribute name="LastGcInfo:duration" outputname="gCDuration"/>
+<attribute name="LastGcInfo:GcThreadCount" outputname="gCThreadCount"/>
+
+<!-- composite-tabular-composite-simple attributes --> 
+
+<!-- 
+Detailed GC Info for the various heap and non-heap memory pools.
+
+I've included an example of extracting "Eden Space" & "Survivor Space"  attributes for HOTSPOT JVM with default GC setup, its just a copy paste exercise for the other pools
+
+Perm Gen
+Perm Gen [shared-ro]
+Perm Gen [shared-rw]
+Eden Space
+Survivor Space
+Tenured Gen
+
+etc...
+
+
+Based on which GC collector and policy you use and which JVM, these memory pool names may differ.
+
+
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Eden Space:value:used" outputname="eden_beforeGCUsed"/>
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Eden Space:value:max" outputname="eden_beforeGCMax"/>
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Eden Space:value:init" outputname="eden_beforeGCInit"/>
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Eden Space:value:committed" outputname="eden_beforeGCCommitted"/>
+
+<attribute name="LastGcInfo:memoryUsageAfterGc:Eden Space:value:used" outputname="eden_afterGCUsed"/>
+<attribute name="LastGcInfo:memoryUsageAfterGc:Eden Space:value:max" outputname="eden_afterGCMax"/>
+<attribute name="LastGcInfo:memoryUsageAfterGc:Eden Space:value:init" outputname="eden_afterGCInit"/>
+<attribute name="LastGcInfo:memoryUsageAfterGc:Eden Space:value:committed" outputname="eden_afterGCCommitted"/>
+
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Survivor Space:value:used" outputname="survivor_beforeGCUsed"/>
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Survivor Space:value:max" outputname="survivor_beforeGCMax"/>
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Survivor Space:value:init" outputname="survivor_beforeGCInit"/>
+<attribute name="LastGcInfo:memoryUsageBeforeGc:Survivor Space:value:committed" outputname="survivor_beforeGCCommitted"/>
+
+<attribute name="LastGcInfo:memoryUsageAfterGc:Survivor Space:value:used" outputname="survivor_afterGCUsed"/>
+<attribute name="LastGcInfo:memoryUsageAfterGc:Survivor Space:value:max" outputname="survivor_afterGCMax"/>
+<attribute name="LastGcInfo:memoryUsageAfterGc:Survivor Space:value:init" outputname="survivor_afterGCInit"/>
+<attribute name="LastGcInfo:memoryUsageAfterGc:Survivor Space:value:committed" outputname="survivor_afterGCCommitted"/>
+-->
+
+</mbean>
+
+</jmxserver>
+
+
+</jmxpoller>

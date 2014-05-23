@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<form>
+    <label>Compilation</label>
+    <fieldset autoRun="true">
+        <input type="dropdown" token="host">
+            <label>Choose host</label>
+            <prefix>host="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="host" fieldForLabel="host" earliest="-1d@d" latest="now"><![CDATA[| metadata type=hosts index=jmx | dedup host | table host]]></populatingSearch>
+        </input>
+        <input type="dropdown" token="jvmDescription">
+            <label>Choose JVM Description</label>
+            <prefix>jvmDescription="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="jvmDescription" fieldForLabel="jvmDescription" earliest="-1d@d" latest="now"><![CDATA[index=jmx sourcetype=jmx $host$ | dedup jvmDescription | table jvmDescription]]></populatingSearch>
+        </input>
+        <input type="time">
+            <default>Last 4 hours</default>
+        </input>
+    </fieldset>
+    <row>
+        <chart>
+            <title>Compilation Time by JVM and Host</title>
+            <searchString><![CDATA[
+                index=jmx sourcetype=jmx $host$ $jvmDescription$ mbean_domain="java.lang" mbean_property_type="Compilation" | chart first(time) as "Compilation Time" by host jvmDescription
+            ]]></searchString>
+            <option name="charting.chart">bar</option>
+            <option name="charting.axisTitleX.text">Host</option>
+            <option name="charting.axisTitleY.text">Compilation Time (Millis)</option>
+        </chart>
+    </row>
+</form>

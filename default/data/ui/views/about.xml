@@ -1,0 +1,54 @@
+<dashboard>
+  
+  <label>About</label>
+  
+  <description>About Monitoring of Pivotal CloudFoundry with JMX</description>
+
+  
+  <row>
+    <html>
+    <p>
+    "Monitoring of Pivotal CloudFoundry with JMX" can be used to poll local or remote JMX Management Servers running in Java Virtual Machines across your entire infrastructure and index MBean attributes, outputs from MBean operations and capture notifications.
+</p>
+<p>
+    <h2>Overview</h2>
+<ul>
+   <li>connect to any local or remote JVM's JMX server, either via the remote JMX interface,attaching to a local JVM process or using an MX4J HTTP based connector.</li>
+   <li>query any MBean running on that server</li>
+   <li>extract any MBean attributes (simple, composite or tabular)</li>
+   <li>invoke MBean operations</li>
+   <li>capture MBean notifications and declare custom notification filters</li>
+   <li>write attributes and operation results out in a default key/value format, or your own custom format, for SPLUNK indexing and searching</li>
+   <li>declare clusters of JVM's for large scale JVM deployments</li>
+   <li>runs on all supported Splunk Platforms</li>
+   <li>manage the JMX Modular Input programmatically via the REST API</li>
+</ul>
+</p>
+
+<p>
+    <h2>Contact the coder (Damien Dallimore)</h2>
+<ul>
+    <li>Email: <a href="mailto:ddallimore@splunk.com">ddallimore@splunk.com</a></li>
+    <li>Twitter: <a href="http://twitter.com/damiendallimore">@damiendallimore</a></li>
+	<li>Splunkbase: <a href="http://splunk-base.splunk.com/users/1760/damien-dallimore">damiend</a></li>
+	<li>Skype: <a href="callto://damien.dallimore">damien.dallimore</a></li>
+</ul>
+</p>
+
+<p>
+    <h2>Want to collaborate ?</h2>
+
+	I think that open systems and community collaboration lead to better products, therefore this app is open sourced and hosted at GitHub
+<br/><br/>
+   <a href="https://github.com/damiendallimore/SplunkModularInputsJavaFramework/tree/master/jmx">GitHub Repository</a>
+
+</p>
+
+        
+        
+        
+    </html>
+   
+  </row>
+
+</dashboard>

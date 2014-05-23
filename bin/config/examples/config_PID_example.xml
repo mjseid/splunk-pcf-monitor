@@ -1,0 +1,52 @@
+<!--
+Example config file that shows 3 ways of declaring a JVM's Process ID for attaching directly
+to a locally running JVM
+
+This file is strictly validated against the schema "config.xsd" (located in jmxpoller.jar)
+-->
+
+<jmxpoller>
+
+<formatter className="com.dtdsoftware.splunk.formatter.TokenizedMBeanNameQuotesStrippedFormatter" />
+
+<!-- Connect to a local JVM by PID -->
+<jmxserver pid="1234" jvmDescription="My JVM">
+
+<mbean domain="java.lang" properties="type=Memory">
+
+<!-- composite attributes -->
+<attribute name="NonHeapMemoryUsage:used" outputname="nonHeapUsed"/>
+<attribute name="NonHeapMemoryUsage:max" outputname="nonHeapMax"/>
+
+</mbean>
+
+</jmxserver>
+
+
+<!-- Connect to a local JVM by PID contained in a PID File -->
+<jmxserver pidFile="/home/myapp/bin/mypidfile.pid" jvmDescription="Another JVM">
+
+<mbean domain="java.lang" properties="type=Memory">
+
+<!-- composite attributes -->
+<attribute name="NonHeapMemoryUsage:used" outputname="nonHeapUsed"/>
+<attribute name="NonHeapMemoryUsage:max" outputname="nonHeapMax"/>
+
+</mbean>
+
+</jmxserver>
+
+<!-- Connect to a local JVM by PID obtained from the output of a custom command -->
+<jmxserver pidCommand="/home/myapp/bin/obtain_JVM_pid.sh" jvmDescription="Another JVM">
+
+<mbean domain="java.lang" properties="type=Memory">
+
+<!-- composite attributes -->
+<attribute name="NonHeapMemoryUsage:used" outputname="nonHeapUsed"/>
+<attribute name="NonHeapMemoryUsage:max" outputname="nonHeapMax"/>
+
+</mbean>
+
+</jmxserver>
+
+</jmxpoller>

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<form>
+    <label>Runtime</label>
+    <fieldset autoRun="true">
+        <input type="dropdown" token="host">
+            <label>Choose host</label>
+            <prefix>host="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="host" fieldForLabel="host" earliest="-1d@d" latest="now"><![CDATA[| metadata type=hosts index=jmx | dedup host | table host]]></populatingSearch>
+        </input>
+        <input type="dropdown" token="jvmDescription">
+            <label>Choose JVM Description</label>
+            <prefix>jvmDescription="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="jvmDescription" fieldForLabel="jvmDescription" earliest="-1d@d" latest="now"><![CDATA[index=jmx sourcetype=jmx $host$ | dedup jvmDescription | table jvmDescription]]></populatingSearch>
+        </input>
+        <input type="time">
+            <default>Last 4 hours</default>
+        </input>
+    </fieldset>
+    <searchTemplate><![CDATA[
+        index=jmx sourcetype=jmx $host$ $jvmDescription$ mbean_domain="java.lang" mbean_property_type="Runtime" |eval startedAt_secs=floor(startedAt/1000) 
+        | eval formattedJVMStartTime=strftime(startedAt_secs,"%H:%M:%S %d %B %Y") 
+        | stats first(jvmName) as jvmName first(jvmVersion) as jvmVersion first(jvmVendor) as jvmVendor first(jvmProcessName) as jvmProcessName first(formattedJVMStartTime) as formattedJVMStartTime max(eval(jvmUptime/1000/60)) as jvmUptimeMinutes by host jvmDescription 
+    ]]></searchTemplate>
+    <row>
+        <table>
+            <title>JVM Overview</title>
+            <searchPostProcess><![CDATA[
+                | table host jvmDescription jvmName as "JVM Name" jvmVersion as "JVM Version" jvmVendor as "JVM Vendor" jvmProcessName as "JVM Process" formattedJVMStartTime as "JVM Start Time" | sort jvmDescription 
+            ]]></searchPostProcess>
+        </table>
+    </row>
+    <row>
+        <chart>
+            <title>JVM Uptime</title>
+            <searchPostProcess><![CDATA[
+                | chart max(jvmUptimeMinutes) as "Uptime in Minutes" by host jvmDescription
+            ]]></searchPostProcess>
+            <option name="charting.chart">bar</option>
+            <option name="charting.axisTitleY.text">Time (Minutes)</option>
+        </chart>
+    </row>
+</form>

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<form>
+    <label>Memory Pools</label>
+    <fieldset autoRun="true">
+        <input type="dropdown" token="host">
+            <label>Choose host</label>
+            <prefix>host="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="host" fieldForLabel="host" earliest="-1d@d" latest="now"><![CDATA[| metadata type=hosts index=jmx | dedup host | table host]]></populatingSearch>
+        </input>
+        <input type="dropdown" token="jvmDescription">
+            <label>Choose JVM Description</label>
+            <prefix>jvmDescription="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="jvmDescription" fieldForLabel="jvmDescription" earliest="-1d@d" latest="now"><![CDATA[index=jmx sourcetype=jmx $host$ | dedup jvmDescription | table jvmDescription]]></populatingSearch>
+        </input>
+        <input type="time">
+            <default>Last 4 hours</default>
+        </input>
+    </fieldset>
+    <searchTemplate><![CDATA[
+        index=jmx sourcetype=jmx $host$ $jvmDescription$ mbean_domain="java.lang" mbean_property_type="MemoryPool"
+        | bucket _time span=1m
+        | stats first(memoryType) as memoryType first(memManagerNames) as memManagerNames first(usageMax) as usageMax first(usageInit) as usageInit first(usageUsed) as usageUsed first(usageCommitted) as usageCommitted by _time host jvmDescription name
+    ]]></searchTemplate>
+    <row>
+        <table>
+            <title>Memory Pool Overview</title>
+            <searchPostProcess><![CDATA[
+                |stats first(memoryType) as "Type" first(memManagerNames) as "Memory Managers" first(usageMax) as "Max (Bytes)" first(usageInit) as "Init (Bytes)" first(usageCommitted) as "Committed (Bytes)" by host jvmDescription name | sort jvmDescription
+            ]]></searchPostProcess>
+        </table>
+    </row>
+    <row>
+        <chart>
+            <title>Memory Pool Usage</title>
+            <searchPostProcess><![CDATA[
+                | eval jvmpool=jvmDescription+"_"+name | timechart span=1m max(usageUsed) as "Memory Used" by jvmpool
+            ]]></searchPostProcess>
+            <option name="charting.chart">line</option>
+            <option name="charting.chart.nullValueMode">connect</option>
+            <option name="charting.axisTitleX.text">Time</option>
+            <option name="charting.axisTitleY.text">Pool Memory(Bytes)</option>
+        </chart>
+    </row>
+</form>

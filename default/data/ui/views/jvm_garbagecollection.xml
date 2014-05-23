@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<form>
+    <label>Garbage Collection</label>
+    <fieldset autoRun="true">
+        <input type="dropdown" token="host">
+            <label>Choose host</label>
+            <prefix>host="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="host" fieldForLabel="host" earliest="-1d@d" latest="now"><![CDATA[| metadata type=hosts index=jmx | dedup host | table host]]></populatingSearch>
+        </input>
+        <input type="dropdown" token="jvmDescription">
+            <label>Choose JVM Description</label>
+            <prefix>jvmDescription="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="jvmDescription" fieldForLabel="jvmDescription" earliest="-1d@d" latest="now"><![CDATA[index=jmx sourcetype=jmx $host$ | dedup jvmDescription | table jvmDescription]]></populatingSearch>
+        </input>
+        <input type="time">
+            <default>Last 4 hours</default>
+        </input>
+    </fieldset>
+    <searchTemplate><![CDATA[
+        index=jmx sourcetype=jmx $host$ $jvmDescription$ mbean_domain="java.lang" mbean_property_type="GarbageCollector"
+        | eval jvmgc=jvmDescription+"_"+gcName
+        | streamstats current=f global=f window=1 first(colCount) as next_colCount by host jvmgc
+        | eval d_colCount=next_colCount-colCount
+        | eval gcFreq=if(next_colCount>colCount, d_colCount, 0) 
+        | bucket _time span=1m
+        | stats first(jvmgc) as jvmgc first(gcFreq) as gcFreq first(colTime) as colTime first(colCount) as colCount first(memPools) as memPools first(gCStart) as gCStart first(gCEnd) as gCEnd first(gCDuration) as gCDuration first(gCThreadCount) as gCThreadCount by _time host jvmDescription gcName
+    ]]></searchTemplate>
+    <row>
+        <table>
+            <title>Garbage Collection Overview</title>
+            <searchPostProcess><![CDATA[
+                | stats first(colTime) as "Collection Time (Millis)" first(colCount) as "Collection Count" first(memPools) as "Memory Pools" by host jvmDescription gcName | sort jvmDescription
+            ]]></searchPostProcess>
+        </table>
+    </row>
+    <row>
+        <chart>
+            <title>Last Collection Time</title>
+            <searchPostProcess><![CDATA[
+                | timechart avg(gCDuration) by jvmgc
+            ]]></searchPostProcess>
+            <option name="charting.chart">line</option>
+            <option name="charting.chart.nullValueMode">connect</option>
+            <option name="charting.axisTitleX.text">Time</option>
+            <option name="charting.axisTitleY.text">Collection: Time (Millis)</option>
+        </chart>
+    </row>
+    <row>
+        <chart>
+            <title>GC Thread Count</title>
+            <searchPostProcess><![CDATA[
+                | timechart max(gCThreadCount) by jvmgc
+            ]]></searchPostProcess>
+            <option name="charting.chart">line</option>
+            <option name="charting.chart.nullValueMode">connect</option>
+            <option name="charting.axisTitleX.text">Time</option>
+            <option name="charting.axisTitleY.text">Thread Count</option>
+        </chart>
+    </row>
+    <row>
+        <chart>
+            <title>Frequency of Collections</title>
+            <searchPostProcess><![CDATA[
+                | timechart sum(gcFreq) by jvmgc
+            ]]></searchPostProcess>
+            <option name="charting.chart">line</option>
+            <option name="charting.chart.nullValueMode">connect</option>
+            <option name="charting.axisTitleX.text">Time</option>
+            <option name="charting.axisTitleY.text">Collections</option>
+        </chart>
+    </row>
+    <row>
+        <chart>
+            <title>Cumulative Collection Time</title>
+            <searchPostProcess><![CDATA[
+                | chart sum(gCDuration) as "Collection Time" by jvmgc
+            ]]></searchPostProcess>
+            <option name="charting.chart">pie</option>
+            <option name="charting.legend.placement">top</option>
+        </chart>
+        <chart>
+            <title>Cumulative Collection Count</title>
+            <searchPostProcess><![CDATA[
+                | chart sum(gcFreq) as "Collection Count" by jvmgc
+            ]]></searchPostProcess>
+            <option name="charting.chart">pie</option>
+            <option name="charting.legend.placement">top</option>
+        </chart>
+    </row>
+</form>

@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<form>
+    <label>JMX Connectivity Errors</label>
+    <fieldset autoRun="true">
+        <input type="dropdown" token="host">
+            <label>Choose host</label>
+            <prefix>host="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="host" fieldForLabel="host" earliest="-1d@d" latest="now"><![CDATA[| metadata type=hosts index=jmx | dedup host | table host]]></populatingSearch>
+        </input>
+        <input type="dropdown" token="jvmDescription">
+            <label>Choose JVM Description</label>
+            <prefix>jvmDescription="</prefix>
+            <suffix>"</suffix>
+            <choice value="*">All</choice>
+            <default>*</default>
+            <populatingSearch fieldForValue="jvmDescription" fieldForLabel="jvmDescription" earliest="-1d@d" latest="now"><![CDATA[index=_internal ExecProcessor error jmx.py $host$ | dedup jvmDescription | table jvmDescription]]></populatingSearch>
+        </input>
+        <input type="time">
+            <default>Last 4 hours</default>
+        </input>
+    </fieldset>
+    <searchTemplate>
+        <![CDATA[
+           index=_internal ExecProcessor error jmx.py $host$ $jvmDescription$
+            | stats count by systemErrorMessage host jmxport jvmDescription 
+        ]]>
+    </searchTemplate>
+    <row>
+        <table>
+            <title>Errors</title>
+            <searchPostProcess>
+                <![CDATA[
+                    | stats sum(count) as "JMX Connection Error Count" by host jmxport jvmDescription
+                ]]>
+            </searchPostProcess>
+        </table>
+    </row>
+    <row>
+        <table>
+            <title>Error Messages</title>
+            <searchPostProcess>
+                <![CDATA[
+                    | stats sum(count) as "Count" by systemErrorMessage host jvmDescription
+                ]]>
+            </searchPostProcess>
+        </table>
+    </row>
+    <row>
+        <chart>
+            <title>Errors by Host</title>
+            <searchPostProcess>
+                <![CDATA[
+                    | stats sum(count) as "Count" by host
+                ]]> 
+            </searchPostProcess>
+            <option name="charting.chart">pie</option>
+        </chart>
+        <chart>
+            <title>Errors by JVM</title>
+            <searchPostProcess>
+                <![CDATA[
+                    | stats sum(count) as "Count" by jvmDescription
+                ]]> 
+            </searchPostProcess>
+            <option name="charting.chart">pie</option>
+        </chart>
+        <chart>
+            <title>Errors by Message</title>
+            <searchPostProcess>
+                <![CDATA[
+                    | stats sum(count) as "Count" by systemErrorMessage
+                ]]> 
+            </searchPostProcess>
+            <option name="charting.chart">pie</option>
+        </chart>
+    </row>
+</form>

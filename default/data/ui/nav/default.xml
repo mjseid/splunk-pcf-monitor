@@ -1,0 +1,35 @@
+<nav search_view="search">
+
+<view name="landing_page" default="true"/>
+
+<collection label="Health">
+<view name="health" />
+</collection>
+
+<collection label="OS Related Metrics">
+<view name="os_metrics" />
+</collection>
+
+<collection label="Compenent Specific Metrics"> 
+  <view name="component_metrics_cc" />
+  <view name="component_metrics_dea" />
+  <view name="component_metrics_hm9000" />
+  <view name="component_metrics_router" />
+  <view name="component_metrics_collector" />
+</collection>
+
+<collection label="Documentation"> 
+ 
+  <a href="/static/app/jmx_cf/docs/readme/README.md">User Guide</a> 
+  <a href="/static/app/jmx_cf/docs/configuration_schema/config.pdf">XML Configuration Schema Guide</a>   
+  <a href="/static/app/jmx_cf/docs/javadoc/com/dtdsoftware/splunk/formatter/Formatter.html">Custom Formatter javadocs</a>
+  <a href="http://en.wikipedia.org/wiki/Java_Management_Extensions">JMX Overview</a>
+  <a href="http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html#remote">Enabling your target JVM</a>
+  <a href="http://docs.oracle.com/javase/7/docs/api/javax/management/NotificationFilter.html">Custom NotificationFilter javadocs</a>
+
+</collection>
+
+<view name="about"/>
+
+   
+</nav>
