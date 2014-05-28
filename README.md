@@ -12,7 +12,8 @@ These directions assume you already have an installed splunk server to work from
 This product has been tested with Splunk 6.0 and 6.1.  If you are using older versions some modification may be required.
  
 ## Procedure
-- Download this project as a zip file.  Change to tar.gz?
+- The app upload feature of the splunk GUI requires a tar.gz file.  To download this project in that format use the following link:
+https://github.com/mjseid/splunk-pcf-monitor/archive/master.tar.gz
 - Login to splunk the splunk UI.  Select "manage apps" and choose to install app from file.  Point to the previously downloaded .tar.gz file
 - Once the app is installed, log in to your splunk server and edit the config files to point to your OpsMetrics installation
 - edit /opt/splunk/etc/apps/jmx_cf/bin/config/example_config.xml to your opsmetric and save as new file
