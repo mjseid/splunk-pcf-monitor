@@ -3,7 +3,12 @@
 <view name="landing_page" default="true"/>
 
 <collection label="Health">
-<view name="health" />
+<view name="cf_component_health" />
+<view name="vm_health" />
+</collection>
+
+<collection label="OS Metrics">
+<view name="os_metrics" />
 </collection>
 
 <collection label="Compenent Specific Metrics"> 
