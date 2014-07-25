@@ -19,11 +19,11 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="Router" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index router_total_requests router_total_routes router_bad_gateways router_bad_requests log_count_level_error log_count_level_warn log_count_level_fatal router_rejected_requests router_ms_since_last_registry_update router_routed_app_requests</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="Router" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index router_total_requests router_total_routes router_bad_gateways router_bad_requests log_count_level_error log_count_level_warn log_count_level_fatal router_rejected_requests router_ms_since_last_registry_update router_routed_app_requests</searchTemplate>
   <row>
     <chart>
       <title>Total Requests</title>
-      <searchPostProcess>timechart avg(router_total_requests) as "Total Requests" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(router_total_requests) as "Total Requests" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>
@@ -44,7 +44,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Total Routes</title>
-      <searchPostProcess>timechart avg(router_total_routes) as "Total Routes" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(router_total_routes) as "Total Routes" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.axisTitleX.visibility">visible</option>
       <option name="charting.axisTitleY.visibility">visible</option>
       <option name="charting.axisX.scale">linear</option>
@@ -74,7 +74,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Bad Gateways and Requests</title>
-      <searchPostProcess>timechart avg(router_bad_gateways) as "Bad Gateways" avg(router_rejected_requests) as "Rejected Requests" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(router_bad_gateways) as "Bad Gateways" avg(router_rejected_requests) as "Rejected Requests" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -107,7 +107,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
     <chart>
       <title>Logs</title>
       <searchPostProcess>timechart avg(log_count_level_error) as "Error Log" avg(log_count_level_warn) as "Warn Log" avg(log_count_level_fatal) as "Fatal Log" by job_and_index useother=f
- limit=50</searchPostProcess>
+ limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -140,7 +140,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
     <chart>
       <title>Ms Since Last Registry Update</title>
       <searchPostProcess>timechart avg(router_ms_since_last_registry_update) as "MS Since Update" by job_and_index useother=f
- limit=50</searchPostProcess>
+ limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -173,7 +173,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
     <chart>
       <title>Routed App Requests</title>
       <searchPostProcess>timechart avg(router_routed_app_requests) as "App Requests" by job_and_index useother=f
- limit=50</searchPostProcess>
+ limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>

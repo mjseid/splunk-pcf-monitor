@@ -23,6 +23,10 @@
   <view name="component_metrics_logdea" />
 </collection>
 
+<collection label="Reports">
+  <view name="apps_instances" />
+</collection>
+
 <collection label="Documentation"> 
  
   <a href="/static/app/jmx_cf/docs/readme/README.md">User Guide</a> 

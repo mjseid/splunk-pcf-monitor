@@ -19,11 +19,11 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-<searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="DEA" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index dea_registry_resuming dea_registry_crashed dea_registry_starting dea_registry_born dea_registry_deleted dea_registry_stopped dea_registry_running dea_registry_stopping available_memory_ratio available_disk_ratio log_count_level_error log_count_level_warn log_count_level_fatal reservable_stagers can_stage cpu_load_avg warden_request_count total_warden_response_time_in_ms</searchTemplate>
+<searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="DEA" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index dea_registry_resuming dea_registry_crashed dea_registry_starting dea_registry_born dea_registry_deleted dea_registry_stopped dea_registry_running dea_registry_stopping available_memory_ratio available_disk_ratio log_count_level_error log_count_level_warn log_count_level_fatal reservable_stagers can_stage cpu_load_avg warden_request_count total_warden_response_time_in_ms</searchTemplate>
   <row>
     <chart>
       <title>CPU Load</title>
-      <searchPostProcess>timechart avg(cpu_load_avg) as "CPU Load" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(cpu_load_avg) as "CPU Load" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -55,7 +55,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Ratios</title>
-      <searchPostProcess>timechart avg(available_memory_ratio) as "Available Memory" avg(available_disk_ratio) as "Available Disk" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(available_memory_ratio) as "Available Memory" avg(available_disk_ratio) as "Available Disk" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -87,7 +87,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
  <row>
     <chart>
       <title>Registry</title>
-      <searchPostProcess>timechart avg(dea_registry_resuming) as "Resuming" avg(dea_registry_crashed) as "Crashed" avg(dea_registry_starting) as "Starting" avg(dea_registry_born) as "Born" avg(dea_registry_deleted) as "Deleted" avg(dea_registry_stopped) as "Stopped" avg(dea_registry_stopping) as "Stopping" avg(dea_registry_running) as "Running" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(dea_registry_resuming) as "Resuming" avg(dea_registry_crashed) as "Crashed" avg(dea_registry_starting) as "Starting" avg(dea_registry_born) as "Born" avg(dea_registry_deleted) as "Deleted" avg(dea_registry_stopped) as "Stopped" avg(dea_registry_stopping) as "Stopping" avg(dea_registry_running) as "Running" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>
@@ -108,7 +108,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Logs</title>
-      <searchPostProcess>timechart avg(log_count_level_error) as "Error Log" avg(log_count_level_warn) as "Warn Log" avg(log_count_level_fatal) as "Fatal Log" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(log_count_level_error) as "Error Log" avg(log_count_level_warn) as "Warn Log" avg(log_count_level_fatal) as "Fatal Log" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -140,7 +140,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Staging</title>
-      <searchPostProcess>timechart avg(can_stage) as "Can Stage" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(can_stage) as "Can Stage" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -172,7 +172,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Staggers</title>
-      <searchPostProcess>timechart avg(reservable_stagers) as "Reservable Stagers" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(reservable_stagers) as "Reservable Stagers" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -204,7 +204,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Warden Request Count</title>
-      <searchPostProcess>timechart avg(warden_request_count) as "Requests" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(warden_request_count) as "Requests" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>

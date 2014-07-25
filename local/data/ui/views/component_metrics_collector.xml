@@ -19,11 +19,11 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="collector" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index nats_latency_1m</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="collector" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index nats_latency_1m</searchTemplate>
   <row>
     <chart>
       <title>Average NATS Latency Past 1 Minute</title>
-      <searchPostProcess>timechart avg(nats_latency_1m) as "Latency" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(nats_latency_1m) as "Latency" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>

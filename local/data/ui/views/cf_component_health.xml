@@ -18,11 +18,11 @@
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index healthy</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index healthy</searchTemplate>
   <row>
     <chart>
       <title>System Health</title>
-      <searchPostProcess>timechart avg(healthy) as "System Health" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(healthy) as "System Health" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.chart">line</option>

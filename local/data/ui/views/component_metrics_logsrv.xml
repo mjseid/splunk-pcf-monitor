@@ -19,11 +19,11 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="LoggregatorServer" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index LoggregatorServer_messageRouter_numberOfDumpSinks LoggregatorServer_messageRouter_numberOfSyslogSinks LoggregatorServer_messageRouter_numberOfWebsocketSinks LoggregatorServer_httpServer_numberOfMessagesDroppedInParseEnvelopes LoggregatorServer_httpServer_numberOfMessagesUnMarshalErrorsInParseEnvelopes LoggregatorServer_httpServer_numberOfMessagesUnmarshalledInParseEnvelopes LoggregatorServer_numGoRoutines LoggregatorServer_memoryStats_lastGCPauseTimeNS LoggregatorServer_agentListener_currentBufferCount LoggregatorServer_agentListener_receivedByteCount LoggregatorServer_agentListener_receivedMessageCount</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="LoggregatorServer" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index LoggregatorServer_messageRouter_numberOfDumpSinks LoggregatorServer_messageRouter_numberOfSyslogSinks LoggregatorServer_messageRouter_numberOfWebsocketSinks LoggregatorServer_httpServer_numberOfMessagesDroppedInParseEnvelopes LoggregatorServer_httpServer_numberOfMessagesUnMarshalErrorsInParseEnvelopes LoggregatorServer_httpServer_numberOfMessagesUnmarshalledInParseEnvelopes LoggregatorServer_numGoRoutines LoggregatorServer_memoryStats_lastGCPauseTimeNS LoggregatorServer_agentListener_currentBufferCount LoggregatorServer_agentListener_receivedByteCount LoggregatorServer_agentListener_receivedMessageCount</searchTemplate>
   <row>
     <chart>
       <title>Agent Listener Stats</title>
-      <searchPostProcess>timechart avg(LoggregatorServer_agentListener_currentBufferCount) as "Buffer Count" avg(LoggregatorServer_agentListener_receivedByteCount) as "Rx Bytes" avg(LoggregatorServer_agentListener_receivedMessageCount) as "Rx Messages" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(LoggregatorServer_agentListener_currentBufferCount) as "Buffer Count" avg(LoggregatorServer_agentListener_receivedByteCount) as "Rx Bytes" avg(LoggregatorServer_agentListener_receivedMessageCount) as "Rx Messages" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>
@@ -44,7 +44,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>GC Pause</title>
-     <searchPostProcess>eval GCPause=LoggregatorServer_memoryStats_lastGCPauseTimeNS/100000 | timechart avg(GCPause) as "GC Pause" by job_and_index useother=f limit=50</searchPostProcess>
+     <searchPostProcess>eval GCPause=LoggregatorServer_memoryStats_lastGCPauseTimeNS/100000 | timechart avg(GCPause) as "GC Pause" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -76,7 +76,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Go Routines</title>
-     <searchPostProcess>timechart avg(LoggregatorServer_numGoRoutines) as "Go Routines" by job_and_index useother=f limit=50</searchPostProcess>
+     <searchPostProcess>timechart avg(LoggregatorServer_numGoRoutines) as "Go Routines" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -108,7 +108,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Http Server</title>
-     <searchPostProcess>timechart avg(LoggregatorServer_httpServer_numberOfMessagesDroppedInParseEnvelopes) as "Drop Mx " avg(LoggregatorServer_httpServer_numberOfMessagesUnMarshalErrorsInParseEnvelopes) as "Mx Errors" avg(LoggregatorServer_httpServer_numberOfMessagesUnmarshalledInParseEnvelopes) as "Mx UnMarsh" by job_and_index useother=f limit=50</searchPostProcess>
+     <searchPostProcess>timechart avg(LoggregatorServer_httpServer_numberOfMessagesDroppedInParseEnvelopes) as "Drop Mx " avg(LoggregatorServer_httpServer_numberOfMessagesUnMarshalErrorsInParseEnvelopes) as "Mx Errors" avg(LoggregatorServer_httpServer_numberOfMessagesUnmarshalledInParseEnvelopes) as "Mx UnMarsh" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -140,7 +140,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Message Router</title>
-     <searchPostProcess>timechart avg(LoggregatorServer_messageRouter_numberOfDumpSinks) as "Dump" avg(LoggregatorServer_messageRouter_numberOfSyslogSinks) as "Syslog" avg(LoggregatorServer_messageRouter_numberOfWebsocketSinks) as "Socket" by job_and_index useother=f limit=50</searchPostProcess>
+     <searchPostProcess>timechart avg(LoggregatorServer_messageRouter_numberOfDumpSinks) as "Dump" avg(LoggregatorServer_messageRouter_numberOfSyslogSinks) as "Syslog" avg(LoggregatorServer_messageRouter_numberOfWebsocketSinks) as "Socket" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>

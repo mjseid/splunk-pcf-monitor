@@ -19,11 +19,11 @@ jmx | dedup jvmDescription | table jvmDescription]]>
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="LoggregatorTrafficcontroller" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index LoggregatorTrafficcontroller_agentListener_currentBufferCount  LoggregatorTrafficcontroller_agentListener_receivedByteCount  LoggregatorTrafficcontroller_agentListener_receivedMessageCount LoggregatorTrafficcontroller_loggregatorClient_currentBufferCount LoggregatorTrafficcontroller_loggregatorClient_receivedByteCount LoggregatorTrafficcontroller_loggregatorClient_receivedMessageCount LoggregatorTrafficcontroller_loggregatorClient_sentByteCount LoggregatorTrafficcontroller_loggregatorClient_sentMessageCount LoggregatorTrafficcontroller_memoryStats_lastGCPauseTimeNS LoggregatorTrafficcontroller_numGoRoutines</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" mbean_property_deployment="untitled_dev" mbean_property_job="LoggregatorTrafficcontroller" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index LoggregatorTrafficcontroller_agentListener_currentBufferCount  LoggregatorTrafficcontroller_agentListener_receivedByteCount  LoggregatorTrafficcontroller_agentListener_receivedMessageCount LoggregatorTrafficcontroller_loggregatorClient_currentBufferCount LoggregatorTrafficcontroller_loggregatorClient_receivedByteCount LoggregatorTrafficcontroller_loggregatorClient_receivedMessageCount LoggregatorTrafficcontroller_loggregatorClient_sentByteCount LoggregatorTrafficcontroller_loggregatorClient_sentMessageCount LoggregatorTrafficcontroller_memoryStats_lastGCPauseTimeNS LoggregatorTrafficcontroller_numGoRoutines</searchTemplate>
   <row>
     <chart>
       <title>Listener Stats</title>
-      <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_agentListener_currentBufferCount) as "Buffer Count" avg(LoggregatorTrafficcontroller_agentListener_receivedByteCount) as "Rx Bytes" avg(LoggregatorTrafficcontroller_agentListener_receivedMessageCount) as "Rx Messages" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_agentListener_currentBufferCount) as "Buffer Count" avg(LoggregatorTrafficcontroller_agentListener_receivedByteCount) as "Rx Bytes" avg(LoggregatorTrafficcontroller_agentListener_receivedMessageCount) as "Rx Messages" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>
@@ -44,7 +44,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
  <row>
     <chart>
       <title>Client Stats</title>
-      <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_loggregatorClient_currentBufferCount) as "Buffer Count" avg(LoggregatorTrafficcontroller_loggregatorClient_receivedByteCount) as "Rx Bytes" avg(LoggregatorTrafficcontroller_loggregatorClient_receivedMessageCount) as "Rx Messages" avg(LoggregatorTrafficcontroller_loggregatorClient_sentByteCount) as "Tx Bytes" avg(LoggregatorTrafficcontroller_loggregatorClient_sentMessageCount) as "Tx Messages" by job_and_index useother=f limit=50</searchPostProcess>
+      <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_loggregatorClient_currentBufferCount) as "Buffer Count" avg(LoggregatorTrafficcontroller_loggregatorClient_receivedByteCount) as "Rx Bytes" avg(LoggregatorTrafficcontroller_loggregatorClient_receivedMessageCount) as "Rx Messages" avg(LoggregatorTrafficcontroller_loggregatorClient_sentByteCount) as "Tx Bytes" avg(LoggregatorTrafficcontroller_loggregatorClient_sentMessageCount) as "Tx Messages" by job_and_index useother=f limit=200</searchPostProcess>
       <option name="charting.chart">line</option>
       <option name="charting.chart.nullValueMode">connect</option>
       <option name="charting.axisTitleX.text">Time</option>
@@ -65,7 +65,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>GC Pause</title>
-     <searchPostProcess>eval GCPause=LoggregatorTrafficcontroller_memoryStats_lastGCPauseTimeNS/100000 | timechart avg(GCPause) as "GC Pause" by job_and_index useother=f limit=50</searchPostProcess>
+     <searchPostProcess>eval GCPause=LoggregatorTrafficcontroller_memoryStats_lastGCPauseTimeNS/100000 | timechart avg(GCPause) as "GC Pause" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>
@@ -97,7 +97,7 @@ jmx | dedup jvmDescription | table jvmDescription]]>
   <row>
     <chart>
       <title>Go Routines</title>
-     <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_numGoRoutines) as "Go Routines" by job_and_index useother=f limit=50</searchPostProcess>
+     <searchPostProcess>timechart avg(LoggregatorTrafficcontroller_numGoRoutines) as "Go Routines" by job_and_index useother=f limit=200</searchPostProcess>
       <earliestTime>$earliest$</earliestTime>
       <latestTime>$latest$</latestTime>
       <option name="charting.axisTitleX.visibility">visible</option>

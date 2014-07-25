@@ -18,7 +18,7 @@
       </default>
     </input>
   </fieldset>
-  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" | eval job_and_index = mbean_property_job + ":" + mbean_property_index | fields job_and_index system_healthy</searchTemplate>
+  <searchTemplate>index=jmx_cf sourcetype=jmx host="*" $jvmDescription$ mbean_domain="org.cloudfoundry" | eval job_and_index = jvmDescription + "_" + mbean_property_job + "_" + mbean_property_index | fields job_and_index system_healthy</searchTemplate>
   <row>
     <chart>
       <title>System Health</title>
